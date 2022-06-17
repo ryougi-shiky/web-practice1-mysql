@@ -1,3 +1,57 @@
+const express = require('express');
+const fs = require('fs');
+const mysql = require('mysql');
+const path = require('path');
+
+const app = express();
+
+
+
+const utils = require('utils.js');
+
+
+app.get('/', (req, resp) => {
+    const pool = mysql.createPool({
+        database: 'blog',
+        user: 'root',
+        password: 'root'
+    })
+    pool.getConnection((err, connection) => {
+        if (!err){
+            const sql = 'select * from '
+            connection.query(sql, sqlParams, (e, results) => {
+                if (!e){
+                    console.log(results);
+                    resp.send(results);
+                }
+            })
+        } else {
+            console.log(err);
+        }
+    })
+    fs.readFile('public/home.html', (err, data) => {
+        if (!err){
+            resp.end(data);
+        } else {
+            console.log(err);
+        }
+    })
+})
+
+app.get('/login', (req, resp) => {
+    fs.readFile('public/login.html', (err, data) => {
+        if (!err){
+            resp.end(data);
+        } else {
+            console.log(err);
+        }
+    })
+})
+
+app.listen(3000, () => {
+  console.log("server starts");
+})
+/*
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -50,3 +104,4 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+*/
